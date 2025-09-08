@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Tektur:wght@400;700&display=swap');
+
+:root {
+  --color-bg: #001a64;
+  --color-primary: #3ecdef;
+  --color-accent: #fd1d75;
+  --font-base: 'Montserrat', sans-serif;
+  --font-display: 'Tektur', sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  font-family: var(--font-base);
+  margin: 0;
+}
+
+.btn {
+  background-color: var(--color-accent);
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+  background-color: var(--color-primary);
+  transform: scale(1.05);
+}
+
+.card {
+  background-color: rgba(0, 26, 100, 0.6);
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.form-control {
+  background-color: transparent;
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  color: #fff;
+}
+
+.nav {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 0.5rem;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.modal-dialog-lg {
+  width: 700px;
+  max-width: 700px;
+}
+
+.modal-dialog-md {
+  width: 500px;
+  max-width: 500px;
+}
+
+.modal-body-pad {
+  padding: 20px 70px;
+}
+
+.btn-code {
+  width: 90px;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+}
