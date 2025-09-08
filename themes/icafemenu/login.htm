@@ -1,0 +1,400 @@
+
+
+<div id="page_login" class="d-none">
+	<div class="feedback-icon">
+		<a href="javascript:void(0)" class="power-button pt-3 lang" data-toggle="tooltip" title="Shutdown" onclick="javascript:shutdown_click()">
+			<i class="fal fa-power-off fa-2x text-white"></i> 
+		</a>
+		<a href="javascript:void(0)" class="reboot-button pt-3 lang" data-toggle="tooltip" title="Reboot" onclick="javascript:reboot_click()">
+			<i class="fal fa-rotate-right fa-2x text-white"></i> 
+		</a>
+	</div>
+	<span id="version_date" class=" align-moddle ml-2 text-white"></span>
+	<!-- st:login div -->
+	<div class="pc_name normal-only"></div>
+	<div class="loginDiv h-100 formDiv">
+		<section class=" h-100 d-flex align-items-center justify-content-center">
+			<div class="text-center col-4 login-form-div" id="login-form-container" >
+				<form method="post" id="loginForm" role="form" class="form-horizontal" onsubmit="return delay_execute(login_form_submit);">
+					<div class="form-group row client-form-row d-flex justify-content-center" >
+						<div class="col-auto">
+							<input type="text" id="username" name="username" class="form-control lang bg-transparent" placeholder="Username">
+						</div>
+					</div>
+
+					<div class="form-group row client-form-row d-flex justify-content-center" >
+						<div class="col-auto">
+							<input type="password" id="password" name="password" class="form-control lang bg-transparent" placeholder="Password">
+						</div>
+					</div>
+					<div class="btn-group text-center d-flex justify-content-center">
+						<button type="submit" class="btn btn-lg mx-3 memberlogin lang py-0 client-btn-success " data-placement="bottom" data-toggle="tooltip" title="Login"  ><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" v-if="theSettings.social_login == 1" class="btn btn-lg mx-3 lang py-0 client-btn-success " data-placement="bottom" data-toggle="tooltip" title="Social login" onclick="theMemberLogin.show_dialog()" ><i class="fa fa-share-alt fa-2x text-white" ></i></button>
+						<button type="button" v-if="theSettings.topup_login_at_client == 1" class="btn btn-lg mx-3 lang py-0 client-btn-success " data-placement="bottom" data-toggle="tooltip" title="Guest topup login" onclick="theTopupLogin.show_topup_login()" ><i class="fa fa-vcard fa-2x text-white" ></i></button>
+						<button type="button" v-if="theSettings.allow_topup_at_client == 1" class="btn btn-lg mx-3 lang py-0 client-btn-success " data-placement="bottom" data-toggle="tooltip" title="Topup" onclick="javascript:theShop.show_topup()" ><i class="fal fa-qrcode fa-2x text-white" ></i></button>
+						<button type="button" v-if="(theSettings.register_member_at_client == 1 || theSettings.enable_icafesports == 1) && ((theSettings.client_register_member_way ?? 0) == 1)" class="btn btn-lg mx-3 lang py-0 btn-info" id="register-button" onclick="theMemberRegister.show_dialog()" data-placement="bottom" data-toggle="tooltip" title="Register"><i class="fal fa-plus fa-2x text-white" ></i></button>
+						<button type="button" v-if="(theSettings.register_member_at_client == 1 || theSettings.enable_icafesports == 1) && ((theSettings.client_register_member_way ?? 0) != 1)" class="btn btn-lg mx-3 lang py-0 btn-info" id="register-button" onclick="theMemberRegister.show_client_register()" data-placement="bottom" data-toggle="tooltip" title="Register"><i class="fal fa-plus fa-2x text-white" ></i></button>
+						<button type="button" v-if="((theSettings.client_reset_password_way ?? 0) == 1)" class="btn btn-lg mx-3 lang py-0 btn-warning" id="forgot-password-button" onclick="theForgotPassword.show_dialog()" data-placement="bottom" data-toggle="tooltip" title="Forgot password"><i class="fal fa-key fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg mx-3 home-only lang py-0 client-btn-close" id="close-button" onclick="javascript:close_click()" data-placement="bottom" data-toggle="tooltip" title="Close"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</form>
+			</div>
+		</section>
+	</div>
+	<!-- dd:login div -->
+
+	<!-- st:admin exit div -->
+	<div class="adminexitDiv h-100 formDiv" style="display: none;">
+		<section class="h-100 d-flex align-items-center justify-content-center">
+			<div class="admin-exit-form-div" >
+				<form method="post" id="adminexitForm" role="form" class="form-horizontal text-center" onsubmit="return delay_execute(admin_exit_form_submit);">
+					<div class="form-group row client-form-row">
+						<input type="password" class="lang form-control bg-transparent" name="password" placeholder="Admin password" value="">
+					</div>
+
+					<div class="d-flex justify-content-center">
+						<button type="submit" class="lang btn btn-lg mr-3 py-0 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Quit"><i class="fal fa-check fa-2x text-white" aria-hidden="true"></i></button>
+						<button type="button" onclick="javascript:show_login_page('login')" class="lang btn btn-lg py-0 client-btn-close" data-placement="bottom" data-toggle="tooltip" title="Cancel"><i class="fal fa-xmark fa-2x text-white"></i></i></button>
+					</div>
+				</form>
+			</div>
+		</section>
+	</div>
+	<!-- ed:admin exit div -->
+
+	<!-- st:home-version-enter-cafe-id div -->
+	<div class="homecafeidDiv h-100" style="display: none;">
+		<section class="h-100 d-flex align-items-center justify-content-center">
+			<div class="text-center col-3 home-cafeid-form-div" >
+				<form method="post" id="homecafeidForm" role="form" class="form-horizontal text-center" onsubmit="return delay_execute(homecafeid_form_submit);">
+					<div class="form-group row client-form-row">
+						<input type="number" class="lang form-control bg-transparent" name="icafe_id" placeholder="Cafe ID" value="">
+					</div>
+
+					<div class="btn-group text-center">
+						<button type="submit" class="lang btn btn-lg mr-3 py-0 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Continue"><i class="fal fa-check fa-2x text-white"></i></button>
+						<button type="button" onclick="javascript:close_click()" class="lang btn btn-lg py-0 client-btn-close" data-placement="bottom" data-toggle="tooltip" title="Close"><i class="fal fa-xmark fa-2x text-white"></i></i></button>
+					</div>
+				</form>
+			</div>
+		</section>
+	</div>
+	<!-- ed:home-version-enter-cafe-id div -->
+</div>
+
+<!-- st:modal:register-member -->
+<div class="modal myModalRegisterMember" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:700px; max-width:700px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Member</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-register-member" class="form-horizontal" onsubmit="return delay_execute(member_register);">
+				<div class="modal-body" style="padding: 20px 70px;">
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Account</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="account" required>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Birthday</label>
+								<input type="date" class="form-control modal-input bg-transparent" name="birthday" >
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">New password</label>
+								<input type="password" class="form-control bg-transparent" name="password" required>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Confirm password</label>
+								<input type="password" class="form-control bg-transparent" name="confirm_password" required>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">First name</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="first_name">
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Last name</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="last_name">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Phone</label>
+								<input type="tel" class="form-control modal-input bg-transparent" name="phone" >
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Email</label>
+								<input type="email" class="form-control modal-input bg-transparent" name="email" >
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Promo/Referral code</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="promo_code" >
+							</div>
+						</div>
+						<div class="col-6" v-if="theSettings.sms_enable == 1">
+							<div class="form-group">
+								<label class="control-label lang">SMS code</label>
+								<div class="row">
+									<div class="col-7">
+										<input type="text" class="form-control modal-input bg-transparent" name="member_sms_code" >
+									</div>
+									<div class="col-5">
+										<button type="button" style="width:90px; padding-left: 0px; padding-right: 0;text-align:center;" class="btn btn-primary" onclick="javascript:SmsClassFun.sendCode()" id="sms_timer_code" title="Get verification code">GetCode</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="club-rule-agreement-row">
+						<div class="col-12">
+							<div class="form-check form-check-inline" style="display: inline-block !important;">
+								<label for="club-rule-agreement" class="form-check-label">
+									<input type="checkbox" class="form-check-input lang" id="club-rule-agreement" onclick="theMemberRegister.agreement_check()"/>
+									<label class="input-helper" for="club-rule-agreement"><span class="lang">
+										I have read and agree to the <a href="#" onclick="theMemberRegister.show_club_rules()" style="text-decoration: none;">club rules</a>
+									</span></label>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="personal-data-agreement-row">
+						<div class="col-12">
+							<div class="form-check form-check-inline" style="display: inline-block !important;">
+								<label for="personal-data-agreement" class="form-check-label">
+									<input type="checkbox" class="form-check-input lang" id="personal-data-agreement" onclick="theMemberRegister.agreement_check()"/>
+									<label class="input-helper" for="personal-data-agreement"><span class="lang">
+										I agree to the <a href="#" onclick="theMemberRegister.show_personal_data()" style="text-decoration: none;">privacy policy</a>
+									</span></label>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Register" disabled><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:register-member -->
+
+<!-- st:modal:logout -->
+<div class="modal myModalConfirmCheckout" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Confirm checkout</h5>
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="confirmCheckoutForm" onsubmit="return delay_execute(confirm_checkout_submit);">
+				<div class="modal-body p-3">
+					<p class="lang text-center">
+						Are you sure you want to checkout?
+					</p>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Yes"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close  lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:logout -->
+
+<!-- modal:topup-login -->
+<div class="modal myModalTopupLogin" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Guest topup login</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form class="form-horizontal" onsubmit="return delay_execute(theTopupLogin.create_topup_qrcode);">
+				<div class="modal-body" style="padding: 20px 70px;">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Email</label> 
+								<input type="text" class="form-control modal-input bg-transparent" id="topup_memeber_email" name="topup_memeber_email" required>
+							</div>
+							<div class="form-group">
+								<label class="control-label lang">Amount</label>
+								<input type="number" step="0.01" onkeyup="theTopupLogin.topupLoginAmountCalculate()" :placeholder="translate_string('Please input mini amount') + ' ' + theSettings.mini_qr_payment" class="form-control modal-input bg-transparent" id="topup_login_amount" name="topup_login_amount" required>
+							</div>
+							<div class="form-group">
+								<label class="control-label lang">Minutes</label>
+								<input type="number" onkeyup="theTopupLogin.topupLoginTimeCalculate()" class="form-control modal-input bg-transparent" id="topup_login_time" name="topup_login_time" required>
+							</div>
+							<div class="form-group">
+								<label class="control-label lang">Promo code</label> 
+								<input type="text" class="form-control modal-input bg-transparent" id="topup_login_promo_code" name="promo_code">
+							</div>
+						</div>
+						<div id="login_payment_qr" class="col-12 d-flex justify-content-center" data-clipboard-target="#login_payment_qr" @click="copyToClipboard('#login_payment_qr');">
+						</div>
+						<div id="login_payment_type" class="col-12 d-flex justify-content-center"  >
+							<img src="images/kaspi_qr.jpg" style="width: 266px;" class="d-none">
+						</div>
+						<div id="login_payment_url" class="col-12 d-flex justify-content-center">
+							<div class="razorpay-qr-img">
+								<img src="" alt="razorpay payment qr code"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Submit"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- modal:topup-login -->
+
+<!-- modal:member-login  -->
+<div class="modal myModalMemberLogin" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Social login</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="member_login" class="col-12 d-flex justify-content-center" data-clipboard-target="#member_login" @click="copyToClipboard('#member_login');"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- modal:member-login  -->
+
+<!-- modal:member-register  -->
+<div class="modal myModalQRMemberRegister" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Register</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="member_register" class="col-12 d-flex justify-content-center" data-clipboard-target='#member_register' @click="copyToClipboard('#member_register')"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- st:modal:club rules agreement- -->
+<div class="modal clubRulesModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Club Rules</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="club_rules_content" style="white-space: pre-wrap;"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:club rules agreement- -->
+<!-- st:modal:personal data agreement- -->
+<div class="modal personalDataModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Privacy Policy</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="personal_data_content" style="white-space: pre-wrap;"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:personal data agreement- -->
+
+<!-- st:modal:forgot-password -->
+<div class="modal myModalForgotPassword" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Forgot password</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-forgot-password" class="form-horizontal" onsubmit="return delay_execute(theForgotPassword.submit_form);">
+				<div class="modal-body" style="padding: 20px 70px;">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Phone number</label>
+								<input type="tel" class="form-control modal-input bg-transparent" name="phone_number" required>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Submit"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="Cancel"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:forgot-password -->

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>iCafeCloud Client</title>
+	<link rel="shortcut icon" href="images/favicon.ico" />
+	<script src="../../core/core.js"></script>
+	<script>
+		ICAFEMENU_CORE.loadCoreStyle(document);
+	</script>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	
+</head>
+<body ondragstart="return false" onselectstart = "return false" class="bs-c br-n ba-f text-gray" :style="vueGlobal.bodyStyle" @vue:mounted="mounted()" v-cloak>
+
+<div id="page-login"></div>
+<div id="page-layout"></div>
+
+<div id="page-shop-modal"></div>
+<div id="page-game-modal"></div>
+
+<div id="page-event-modal"></div>
+<div id="page-system-settings-modal"></div>
+<div id="page-copy-game-license-modal"></div>
+
+<script>
+	function loadHtml(url, id)
+	{
+		const xhr = new XMLHttpRequest();
+		xhr.open('GET', url, false);
+		xhr.onload = function() {
+			if (xhr.status >= 200 && xhr.status < 300) {
+				document.getElementById(id).outerHTML = xhr.responseText;
+			} else {
+				console.log('加载文件失败:', xhr.statusText);
+			}
+		};
+		
+		xhr.send();
+	}
+
+	// 定义需要加载的文件及其容器
+	const pages = [
+		{ url: 'login.htm', id: 'page-login' },
+		{ url: 'layout.htm', id: 'page-layout' },
+		{ url: 'home.htm', id: 'page-home' },
+		{ url: 'game.htm', id: 'page-game' },
+		{ url: 'shop.htm', id: 'page-shop' },
+		{ url: 'event.htm', id: 'page-event' },
+		{ url: 'rank.htm', id: 'page-rank' },
+		{ url: 'game-modal.htm', id: 'page-game-modal' },
+		{ url: 'shop-modal.htm', id: 'page-shop-modal' },
+		{ url: 'event-modal.htm', id: 'page-event-modal' },
+		{ url: 'system-settings-modal.htm', id: 'page-system-settings-modal' },
+		{ url: 'copy-game-license-modal.htm', id: 'page-copy-game-license-modal' },
+	];
+
+	pages.map(page => {
+		return loadHtml(page.url, page.id);
+	});
+</script>
+<script>
+	ICAFEMENU_CORE.loadCoreScript(document);
+</script>
+<script src="js/app.js"></script>
+</body>
+</html>

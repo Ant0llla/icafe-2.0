@@ -1,0 +1,633 @@
+
+<div id="page_lock" class="formDiv" style="z-index: 999; display: none;">
+	<section class="h-100 d-flex align-items-center justify-content-center">
+		<div class="text-center col-3 unlock-form-div">
+			<form method="post" id="unlockForm" role="form" class="text-center form-horizontal" onsubmit="return delay_execute(unlock_form_submit);">
+				<h2 class="lang text-center mb-5">Unlock</h2>
+
+				<div class="form-group row client-form-row" >
+					<input type="password" class="lang form-control bg-transparent" name="password" placeholder="Password">
+				</div>
+
+				<div class="btn-group text-center">
+					<button type="submit" class="lang btn btn-lg btn-unlock py-0 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Unlock"><i class="fal fa-unlock fa-2x text-white"></i></button>
+				</div>
+			</form>
+		</div>
+	</section>
+</div>
+
+<div id="matrix-animation" class="d-none w-100 h-100 container p-0 m-0"><canvas style="z-index:-1; overflow: hidden" class="w-100 h-100"></canvas></div>
+
+<div id="page_games" class="d-flex flex-column">
+	<!-- st:header -->
+	<section class="header-section mt-4">
+		<div class="header-area position-relative px-5 border-header">
+			<div class="position-absolute logo">
+				<img class="w-100 rounded-circle" id="cafe_info_cafe_logo" src="posters/cafe_info_cafe_logo.png" onerror="this.src='images/logo-home.png';" style="aspect-ratio: 1/1;" >
+			</div>
+			<div class="header-menu text-white d-flex align-items-center justify-content-center" style="height: 60px;">
+				<a class="lang mr-1"  href="javascript:theHome.show(true)" data-toggle="tooltip" data-placement="bottom" title="Home">
+					<i class="fal fa-home fa-2x menu-icon" :class="[vueGlobal.pageType == 'Home' ? 'header-menu-active' : '' ]" ></i>
+				</a>
+				<a class="lang mr-1" href="javascript:theGameList.show()" data-toggle="tooltip" data-placement="bottom" title="Games">
+					<i class="fal fa-gamepad-modern fa-2x menu-icon" :class="[vueGlobal.pageType == 'Games' ? 'header-menu-active' : '' ]"></i>
+				</a>
+				<a class="lang mr-1" href="javascript:theShop.show()" data-toggle="tooltip" data-placement="bottom" title="Shop">
+					<i class="fal fa-shopping-cart fa-2x menu-icon" :class="[vueGlobal.pageType == 'Shop' ? 'header-menu-active' : '' ]" ></i>
+				</a>
+				<a class="lang mr-1" href="javascript:theEvents.show()" data-toggle="tooltip" data-placement="bottom" title="Events" v-if="theSettings.license_start_game_tracker ?? 0">
+					<i class="fal fa-gift fa-2x menu-icon" :class="[vueGlobal.pageType == 'Event' || vueGlobal.pageType == 'EventDetail' ? 'header-menu-active' : '' ]"></i>
+				</a>
+				<a class="lang" href="javascript:theRank.show()" data-toggle="tooltip" data-placement="bottom" title="Rank" v-if="theSettings.license_start_game_tracker ?? 0">
+					<i class="fal fa-trophy fa-2x menu-icon" :class="[vueGlobal.pageType == 'Rank' ? 'header-menu-active' : '' ]"></i>
+				</a>
+			</div>
+			<div class="position-absolute r-8 t-0 col-4">
+				<div class="d-flex flex-row align-items-center text-white justify-content-end" style="height: 60px;">
+					<div class="mr-4 w-50 flex-grow-1 d-flex justify-content-end">
+						<a class="lang mr-1" href="javascript:theShop.show_topup()" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Topup" v-if="theSettings.allow_topup_at_client == 1">
+							<i class="fal fa-qrcode fa-2x menu-icon text-success"></i>
+						</a>
+						<div>
+							<div class="col-md-12 text-right d-flex member_balance_realtime align-items-center justify-content-end">
+								<label>{{memberInfo.member_balance_realtime}}</label>
+								<i class="fal fa-fw fa-wallet ml-1 lang" data-toggle="tooltip" data-placement="bottom" title="Balance"></i>
+							</div>
+							<div class="col-md-12 text-right d-flex member_coin_balance align-items-center justify-content-end">
+								<label>
+									{{memberInfo.member_coin_balance}}
+								</label>
+								<i class="fal fa-fw fa-gamepad ml-1 lang" data-toggle="tooltip" data-placement="bottom" title="Coins"></i>
+							</div>
+						</div>
+					</div>
+					<div class="mr-3">
+						<i class="fal fa-clock fa-xl" ></i>
+					</div>
+					<div class="mr-3" >
+						<span class="lang " id="localTime"></span>
+					</div>
+					<div class="mr-3">
+						<a class="lang pr-2" href="javascript:audio_settings()" data-toggle="tooltip" data-placement="bottom" title="Audio settings">
+							<i class="fal fa-volume-off fa-xl" ></i>
+						</a>
+					</div>
+
+					<div class="dropdown p-2" style="height: 60px; aspect-ratio: 1/1;" >
+						<span class="p-0" data-toggle="dropdown">
+							<img src="images/default-avatar.png" class="cafe_info_member_logo rounded-circle h-100 w-100 c-pointer" onerror="this.src='images/default-avatar.png';">
+						</span>
+						<div class="dropdown-menu mt-0 text-truncate" style="left: inherit !important;right: -5px;">
+							<a v-show="vueGlobal.menuButton.convertToMember" class="lang dropdown-item text-truncate" href="javascript:theConvertToMember.show()">Account</a>
+							<a class="lang dropdown-item text-truncate" href="javascript:theEvents.refresh()">Refresh</a>
+							<a class="lang dropdown-item text-truncate" href="javascript:customer_order_list()" v-if="vueGlobal.showOrderList">Order list</a>
+							<a class="lang dropdown-item text-truncate" href="javascript:customer_balance_history()">Balance history</a>
+							<a class="lang dropdown-item text-truncate" href="javascript:mouse_settings()">Mouse settings</a>
+							<a class="lang dropdown-item text-truncate" href="javascript:display_settings()">Display settings</a>
+							<a v-show="vueGlobal.menuButton.assist" class="lang dropdown-item text-truncate" href="javascript:send_assist()">Ask help</a>
+							<a v-show="vueGlobal.menuButton.feedback" class="lang dropdown-item text-truncate" href="javascript:customer_feedback()" >Feedback</a>
+							<a v-show="theSettings.join_us" class="lang dropdown-item text-truncate" href="javascript:open_url(theSettings.join_us)">Join us</a>
+							<a v-show="vueGlobal.menuButton.changepassword && memberInfo.canChangePassword" class="lang dropdown-item text-truncate" href="javascript:change_password_click()">Change password</a>
+							<a class="lang dropdown-item text-truncate" href="javascript:show_set_lockpassword_dialog()">Lock PC</a>
+							<a v-show="vueGlobal.menuButton.logout" class="lang dropdown-item text-truncate" href="javascript:checkout_click()">Logout</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- ed:header -->
+
+	<!-- st:main area -->
+	<section class="w-100 px-5 pt-5 pb-0 d-flex flex-column m-0 h-50 flex-grow-1" id="games">
+		<div id="page-home"></div>
+		<div id="page-game"></div>
+		<div id="page-shop"></div>
+		<div id="page-event"></div>
+		<div id="page-rank"></div>
+
+		<!-- st:bottom -->
+		<section>
+			<div class="d-flex flex-row bd-highlight justify-content-md-center align-items-center bottom-section border-block" style="height: 60px">
+				<div id="bottom-run-games" class="d-flex justify-content-md-center"></div>
+			</div>
+		</section>
+	</section>
+	<!-- ed:main area -->
+	<div class="feedback-icon" v-if="theSettings.license_show_client_mode == 'full screen' && (theSettings.full_screen_shutdown_and_reboot ?? 1) == 1">
+		<a href="javascript:void(0)" class="power-button pt-3 lang" data-toggle="tooltip" title="Shutdown" onclick="javascript:shutdown_click();">
+			<i class="fal fa-power-off fa-2x text-white"></i> 
+		</a>
+		<a href="javascript:void(0)" class="reboot-button pt-3 lang" data-toggle="tooltip" title="Reboot" onclick="javascript:reboot_click();">
+			<i class="fal fa-rotate-right fa-2x text-white"></i> 
+		</a>
+	</div>
+	<!-- ed:bottom -->
+
+</div>
+
+<!-- st:modal:order list -->
+<div class="modal myModalOrderList" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered max-width-90" role="document">
+		<div class="modal-content modal-content-order">
+			<div class="modal-header">
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="table-responsive mb-3 mx-5 w-auto" id="orderlist-items">
+				<div class="col-12">
+					<div class="row ">
+						<div class="col-12 col-sm-6 mb-xs-4  pt-2 pb-2 mb-xl-0 row align-items-center">
+							<h4 class="card-title lang my-0 mr-2 lang">
+								Order list
+							</h4>
+						</div>
+
+						<div class="col-12 col-sm-6 mb-xs-4 mb-xl-0 pt-2 pb-2 text-md-right d-none d-md-block">
+							<div class="d-inline-flex">
+								<div class="pr-1 mb-3 mb-xl-0">
+									<form method="post" id="order-search-form" @submit.prevent="return order_search_post();">
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text" > <i class="fal fa-search"></i> </span>
+											</div>
+											<input type="text" name="search" class="form-control lang order-text" placeholder="Search..." aria-label="search" aria-describedby="search" style="padding:0 1rem; height:40px; font-size:12px;">
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+				<table class="table center-aligned-table table-hover table-layout-fixed">
+					<thead>
+						<tr>
+							<th scope="col" class="ellipsiss">#</th>
+							<th scope="col" class="ellipsiss lang width-200">Date</th>
+							<th scope="col" class="ellipsiss lang">Status</th>
+							<th scope="col" class="ellipsiss lang width-200">Product</th>
+							<th scope="col" class="ellipsiss text-right lang">Total</th>
+							<th scope="col" class="ellipsiss lang">Payment</th>
+							<th scope="col" class="ellipsiss lang width-100">PC</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr v-for="item in vueOrderList.items" class="table-row" :data-orderno="item.order_no">
+							<td class="ellipsiss"> {{item.order_no}} </td>
+							<td><div class="ellipsiss" :title="item.order_create_time_local"> {{format_datetime(item.order_create_time)}} </div></td>
+							<td class="lang order-status-td">
+								<div class="ellipsiss">
+								<span v-if="item.order_status == 1" class="badge badge-order-pending lang">{{translate_string('Pending')}}</span>
+								<span v-if="item.order_status == 2" class="badge badge-order-paid lang">{{translate_string('Paid')}}</span><i v-if="item.order_print_times > 0" class="fa fa-2x fa-print text-info"></i>
+								<span v-if="item.order_status == 3" class="badge badge-order-cancelled lang">{{translate_string('Cancelled')}}</span>
+								<span v-if="item.order_status == 4" class="badge badge-order-in-process lang">{{translate_string('In process')}}</span>
+								</div>
+							</td>
+							<td><div class="ellipsiss" :title="item.product_name"> {{item.product_name}} </div></td>
+							<td class="ellipsiss text-right">{{item.order_money}}</td>
+							<td class="ellipsiss lang">{{getPaymentMethod(item.order_payment_method)}}</td>
+							<td><div class="ellipsiss" :title="item.order_pc"> {{item.order_pc}} </div></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<nav class="mt-5">
+					<ul class="pagination flex-wrap pagination-separated pagination-info justify-content-end">
+						<li class="page-item"><a class="page-link page-item" @click="javascript:order_page_first()" style="cursor: pointer">&laquo;</a></li>
+						<li class="page-item"><a class="page-link page-item" @click="javascript:order_page_previous()" style="cursor: pointer">&lsaquo;</a></li>
+					 
+						<div v-for="item in vueOrderList.paging_info.page_end">
+							<li v-if="item >= vueOrderList.paging_info.page_start" class="page-item" :class="item == vueOrderList.paging_info.page ? 'active' : ''"><a class="page-link page-item" @click="javascript:order_page_go(item)" style="cursor: pointer">{{item}}</a></li>
+						</div>
+						<li class="page-item"><a class="page-link page-item" @click="javascript:order_page_next()" style="cursor: pointer">&rsaquo;</a></li>
+						<li class="page-item"><a class="page-link page-item" @click="javascript:order_page_last()" style="cursor: pointer">&raquo;</a></li>
+					</ul>
+				</nav>
+
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:order list -->
+
+<!-- st:modal:feedback -->
+<div class="modal myModalFeedback" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Customer feedback</h5>
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="feedbackForm" class="form-horizontal" onsubmit="return delay_execute(feedback_form_submit);">
+				<div class="modal-body px-3 py-0">
+					<div class="form-group">
+						<label for="subject" class="sr-only">Subject</label>
+						<input type="text" class="form-control lang modal-input bg-transparent" name="subject" id="subject" autofocus="autofocus" placeholder="Subject (up to 100 characters)" maxlength="50">
+					</div>
+					<div class="form-group mb-0">	
+						<label for="message" class="sr-only">Message</label>					
+						<textarea class="form-control lang modal-input bg-transparent" id="message" name="message" rows="6" placeholder="Message (up to 250 characters)" maxlength="250"></textarea>						
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">						
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Yes"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:feedback -->
+
+<!-- st:modal:lock_password -->
+<div class="modal myModalLock" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Lock screen</h5>
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="lockForm" class="form-horizontal" onsubmit="return delay_execute(lock_form_submit);">
+				<div class="modal-body form-group row d-flex align-items-center m-0" >
+					<input type="password" class="form-control modal-input bg-transparent lang" name="password" id="lockform_password" autofocus="autofocus" placeholder="Set unlock password">
+				</div>
+
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg mr-3 lang py-0 client-btn-success " data-placement="bottom" data-toggle="tooltip" title="Yes"  ><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg lang py-0 client-btn-close"  data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:lock_password -->
+
+<!-- st:modal:change_password -->
+<div class="modal myModalChangePassword" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Change password</h5>
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="passwordForm" class="form-horizontal" onsubmit="return delay_execute(change_password_form_submit);">
+				<div class="modal-body px-3 py-0">
+					<input type="hidden" name="account" id="account">
+					<div class="form-group">
+						<input type="text" class="form-control modal-input bg-transparent lang" name="member_account" id="member_account" placeholder="Account" disabled>
+					</div>
+					<div class="form-group" for="old_password">
+						<input type="password" class="form-control bg-transparent lang" name="old_password" id="old_password" placeholder="Current password">
+					</div>
+					<div class="form-group" for="new_password">
+						<input type="password" class="form-control bg-transparent lang" name="new_password" id="new_password" placeholder="New password">
+					</div>
+					<div class="form-group mb-0">
+						<input type="password" class="form-control bg-transparent lang" name="confirm_password"id="confirm_password" placeholder="Confirm password">
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Yes"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close  lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:change_password -->
+
+<!-- st:modal:convert-member -->
+<div class="modal myModalConvertMember" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:700px; max-width:700px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Convert to member</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-convert-member" class="form-horizontal" onsubmit="return delay_execute(theConvertToMember.submit);">
+				<div class="modal-body" style="padding: 20px 70px;">
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Account</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="account" >
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Birthday</label>
+								<input type="date" class="form-control modal-input bg-transparent" name="birthday" >
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">New password</label>
+								<input type="password" class="form-control bg-transparent" name="password">
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Confirm password</label>
+								<input type="password" class="form-control bg-transparent" name="confirm_password">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">First name</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="first_name" >
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Last name</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="last_name" >
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Phone</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="phone" >
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Email</label>
+								<input type="email" class="form-control modal-input bg-transparent" name="email" >
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Convert"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:convert-member -->
+
+<!-- st:modal: member-topup -->
+<div class="modal myModalTopup" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Topup</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-topup" class="form-horizontal" onsubmit="return delay_execute(theShop.topup);">
+				<div class="modal-body" style="padding: 20px 70px;">
+
+					<div class="row">
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Member</label>
+								<input type="text" class="form-control modal-input bg-transparent" id="member_account" name="member_account" required :value="memberInfo.member_name">
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Amount</label>
+								<input type="number" step="0.01" :placeholder="translate_string('Please input mini amount') + ' ' + theSettings.mini_qr_payment" onkeyup="theTopupLogin.topupAmountCalculate()" class="form-control modal-input bg-transparent" id="topup_amount" name="topup_amount" required>
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Minutes</label>
+								<input type="number" onkeyup="theTopupLogin.topupTimeCalculate()" class="form-control modal-input bg-transparent" id="topup_time" name="topup_time" required> 
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Promo code</label>
+								<input type="text" class="form-control modal-input bg-transparent" id="topup_promo_code" name="promo_code">
+							</div>
+						</div>
+						<div id="payment_qr" class="col-12 d-flex justify-content-center" data-clipboard-target="#payment_qr" @click="copyToClipboard('#payment_qr');">
+						</div>
+						<div id="payment_type" class="col-12 d-flex justify-content-center " >
+							<img src="images/kaspi_qr.jpg" style="width: 266px;" class="d-none">
+						</div>
+						<div id="payment_url" class="col-12 d-flex justify-content-center " >
+							<div class="razorpay-qr-img">
+								<img src="" alt="razorpay payment qr code"/>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<div class="btn-group" id="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Submit"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal: member-topup -->
+
+<!-- st:modal:balance history -->
+<div class="modal myModalBalanceHistory" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered max-width-90" role="document">
+		<div class="modal-content modal-content-order">
+			<div class="modal-header">
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="table-responsive mb-3 mx-5 w-auto" id="balance-history-items">
+				<div class="d-flex justify-content-between">
+					<h4 class="card-title lang my-0 mr-2 lang">
+						Balance history
+					</h4>
+					<span class="lang">Last 30 days</span>
+				</div>
+				<table class="table center-aligned-table table-hover table-layout-fixed mt-3">
+					<thead>
+						<tr>
+							<th scope="col" class="lang">Date</th>
+							<th scope="col" class="lang">Event</th>
+							<th scope="col" class="lang ellipsiss text-right">Money</th>
+							<th scope="col" class="lang ellipsiss text-right">Credit card</th>
+							<th scope="col" class="lang ellipsiss text-right">Coin</th>
+							<th scope="col" class="lang ellipsiss text-right">Spend</th>
+							<th scope="col"class="lang ellipsiss text-right">Bonus</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr v-for="history in vueBalanceHistory.items" class="table-row">
+							<td>
+								<div class="ellipsiss" :title="history.log_date_local">
+									{{format_datetime(history.log_date_local)}}
+								</div>
+							</td>
+							<td>
+								<div class="ellipsiss" :title="history.log_event">
+									{{translate_string(history.log_event)}}
+								</div>
+							</td>
+							<td class="text-right">
+								<div class="ellipsiss" :title="formatNumber(history.log_money)">
+									{{formatNumber(history.log_money)}}
+								</div>
+							</td>
+							<td class="text-right">
+								<div class="ellipsiss" :title="formatNumber(history.log_card)">
+									{{formatNumber(history.log_card)}}
+								</div>
+							</td>
+							<td class="text-right">
+								<div class="ellipsiss" :title="formatNumber(history.log_coin)">
+									{{formatNumber(history.log_coin)}}
+								</div>
+							</td>
+							<td class="text-right">
+								<div class="ellipsiss" :title="formatNumber(history.log_spend)">
+									{{formatNumber(history.log_spend)}}
+								</div>
+							</td>
+							<td class="text-right">
+								<div class="ellipsiss" :title="formatNumber(history.log_bonus)">
+									{{formatNumber(history.log_bonus)}}
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<nav class="mt-5 d-flex justify-content-between">
+					<div class="d-flex justify-content-start">
+						<span class="lang">Total top up</span><span class="text-warning mx-3">{{formatNumber(vueBalanceHistory.summary?.topup)}}</span>
+						<span class="lang">Total expenses</span><span  class="text-warning mx-3">{{formatNumber(vueBalanceHistory.summary?.spend)}}</span>
+					</div>
+					<ul class="pagination flex-wrap pagination-separated pagination-info justify-content-end">
+						<li class="page-item"><a class="page-link page-item" @click="javascript:balance_history_page_first()" style="cursor: pointer">&laquo;</a></li>
+						<li class="page-item"><a class="page-link page-item" @click="javascript:balance_history_page_previous()" style="cursor: pointer">&lsaquo;</a></li>
+					 
+						<div v-for="item in vueBalanceHistory.paging_info.page_end">
+							<li v-if="item >= vueBalanceHistory.paging_info.page_start" class="page-item" :class="item == vueBalanceHistory.paging_info.page ? 'active' : ''"><a class="page-link page-item" @click="javascript:balance_history_page_go(item)" style="cursor: pointer">{{item}}</a></li>
+						</div>
+						<li class="page-item"><a class="page-link page-item" @click="javascript:balance_history_page_next()" style="cursor: pointer">&rsaquo;</a></li>
+						<li class="page-item"><a class="page-link page-item" @click="javascript:balance_history_page_last()" style="cursor: pointer">&raquo;</a></li>
+					</ul>
+				</nav>
+
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:balance history -->
+
+<!-- blocker -->
+<div id="block-div"></div>
+
+<div id="spinner" class="cover">
+	<div class="text-center cover-font">
+		<div class="spinner-border" style="width: 6rem;height: 6rem;" role="status">
+			<i class="fal fa-spinner fa-spin fa-5x"></i>
+		</div>
+	</div>
+</div>
+
+<!-- video background -->
+<video class="url-video video-box w-100 h-100 c-pointer" autoplay muted loop style="position: fixed; top: 0; left: 0; z-index: -1; display: none; background-color: black; object-fit: cover;">
+	<source type="video/webm" id="url-video"> 
+</video>
+<div class="youtube-video video-box w-100 h-100 align-middle embed-responsive" style="display: none;">
+	<iframe id="youtube-video" class="embed-responsive-item w-100 h-100" style="position: fixed; top: 0; left: 0; z-index: -1; background-color: black; object-fit: cover;" allow="autoplay"></iframe>
+</div>
+
+<!-- st:modal: shutdown -->
+<div class="modal myModalConfirmShutdown" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Shutdown</h5>
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="confirmShutdownForm" onsubmit="return delay_execute(confirm_shutdown_submit);">
+				<div class="modal-body p-3">
+					<p class="lang text-center">
+						Are you sure you want to shut down?
+					</p>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Yes"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close  lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:shutdown -->
+
+<!-- st:modal: reboot -->
+<div class="modal myModalConfirmReboot" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Reboot</h5>
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="confirmRebootForm" onsubmit="return delay_execute(confirm_reboot_submit);">
+				<div class="modal-body p-3">
+					<p class="lang text-center">
+						Are you sure you want to reboot?
+					</p>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Yes"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close  lang py-0" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:reboot -->

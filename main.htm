@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title class="lang">Starting</title>
+	<script>
+		window.OnCommand_INFO = [];
+		function OnCommand (strCmd, strParam){
+			window.OnCommand_INFO.push({strCmd, strParam})
+		}</script>
+</head>
+<body style="background-color: black">
+	loading...
+<script src='js/icafe.js'></script>
+<script>
+	(async()=>{
+		await new Promise(res=>setTimeout(res, 300));
+		const theme = theSettings.client_theme || 'icafemenu';
+		const theme_url = `themes/${theme}/main.htm?OnCommand=${encodeURIComponent(JSON.stringify(window.OnCommand_INFO))}`;
+		fetch(theme_url).then(()=>{
+			location.href = theme_url
+		}).catch(()=>{
+			console.log(`Failed to load ${theme}, falling back to the icafemenu theme.`)
+			location.href = `themes/icafemenu/main.htm?OnCommand=${encodeURIComponent(JSON.stringify(window.OnCommand_INFO))}`;	
+		})
+		
+	})()
+</script>
+</body>
+</html>

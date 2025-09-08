@@ -1,0 +1,102 @@
+<!-- st:modal:audio -->
+<div class="modal myModalAudio" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Audio settings</h5>
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body p-3 text-center">
+				<div class="volume-slider-container" style="width: 80%; margin: 20px auto; position: relative;">
+					<div class="volume-slider-track" style="height: 4px; background: #ddd; border-radius: 2px; position: relative;">
+						<div class="volume-slider-progress" style="height: 100%; background: #007bff; border-radius: 2px; width: 50%;"></div>
+						<div class="volume-slider-handle" style="width: 16px; height: 16px; background: #007bff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer;"></div>
+					</div>
+					<div class="volume-value mt-2">
+						<span class="current-volume">50</span>%
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="btn-group">
+					<button type="button" class="btn btn-lg client-btn-success lang py-0" data-dismiss="modal"
+						data-placement="bottom" data-toggle="tooltip" title="Leave"><i
+							class="fal fa-check fa-2x text-white"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:audio -->
+
+
+<!-- st:modal:mouse -->
+<div class="modal myModalMouse" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Mouse settings</h5>
+				<button type="button" class="close " data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body p-3 text-center">
+				<!-- mouse move speed control -->
+				<div class="mb-4">
+					<h6 class="lang mb-3">Mouse move speed</h6>
+					<div class="mouse-move-slider-container" style="width: 80%; margin: 0 auto; position: relative;">
+						<div class="mouse-move-slider-track"
+							style="height: 4px; background: #ddd; border-radius: 2px; position: relative;">
+							<div class="mouse-move-slider-progress"
+								style="height: 100%; background: #007bff; border-radius: 2px; width: 50%;"></div>
+							<div class="mouse-move-slider-handle"
+								style="width: 16px; height: 16px; background: #007bff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer;">
+							</div>
+						</div>
+						<div class="mouse-move-value mt-2">
+							<span class="mouse-move-current-speed">5</span>/10
+						</div>
+					</div>
+				</div>
+
+				<!-- Double-click speed control -->
+				<div class="mb-4">
+					<h6 class="lang mb-3">Double-click speed</h6>
+					<div class="double-click-slider-container" style="width: 80%; margin: 0 auto; position: relative;">
+						<div class="double-click-slider-track"
+							style="height: 4px; background: #ddd; border-radius: 2px; position: relative;">
+							<div class="double-click-slider-progress"
+								style="height: 100%; background: #007bff; border-radius: 2px; width: 50%;"></div>
+							<div class="double-click-slider-handle"
+								style="width: 16px; height: 16px; background: #007bff; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer;">
+							</div>
+						</div>
+						<div class="double-click-value mt-2">
+							<span class="double-click-current-speed">5</span>/10
+						</div>
+					</div>
+				</div>
+
+				<!-- Mouse smoothness control -->
+				<div class="mouse-smoothness-control">
+					<div class="form-check form-check-inline" style="margin-top: 10px; margin-left: 50px; text-align:left; cursor: pointer;">
+						<label for="mouseSmoothnessSwitch" class="form-check-label" >
+							<input type="checkbox" class="form-check-input lang" name="mouseSmoothnessSwitch" id="mouseSmoothnessSwitch">
+							<label class="input-helper" for="mouseSmoothnessSwitch"><span class="lang">Mouse smoothness</span></label>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="btn-group">
+					<button type="button" class="btn btn-lg client-btn-success lang py-0" data-dismiss="modal"
+						data-placement="bottom" data-toggle="tooltip" title="Leave"><i
+							class="fal fa-check fa-2x text-white"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:mouse -->

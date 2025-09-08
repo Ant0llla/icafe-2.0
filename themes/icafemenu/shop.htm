@@ -1,0 +1,230 @@
+
+
+<div class="shop-container mb-5 flex-column h-50 flex-grow-1" :class="[vueGlobal.pageType != 'Shop' ? 'd-none' : 'd-flex' ]">
+	<!-- st:shop area -->
+	<div class="d-flex d-inline-flex w-100 rounded align-items-center pl-4 pr-4 font-size-4">
+
+		<span class="mr-4 dropdown c-pointer" >
+			<i class="fal fa-fw fa-bars fa-2x pt-1 pb-1 dropdown" :class="[[-1, -2].includes(vueProductGroupList.current_group_id) ? 'text-white' : 'text-warning' ]" data-toggle="dropdown"></i>
+			<div v-if="vueProductGroupList.dropdownProductGroupList"  class="dropdown-menu text-truncate" style="left: -1rem; max-width: 12rem;">
+				<a v-for="item in vueProductGroupList.dropdownProductGroupList" class="lang dropdown-item text-truncate" :class="[vueProductGroupList.current_group_id == item.product_group_id ? 'dropdown-item-active' : '']" href="javascript:;" @click="theShop.change_group(item.product_group_id)">{{ item.product_group_name }}</a>
+			</div>
+		</span>
+		<span v-for="item in vueProductGroupList.items" :key="item.product_group_id" :data-group="item.product_group_id" class="mr-4 nav-item" @click="theShop.change_group(item.product_group_id)" data-toggle="tooltip" data-placement="bottom" :title="item.product_group_name">
+			<span v-if="item.product_group_id === -1" class="icon c-pointer" ><i class="fal fa-fw fa-clock fa-2x pt-1 pb-1" :class="[vueProductGroupList.current_group_id == -1 ? 'text-warning' : 'text-white']"></i></span>
+			<span v-else-if="item.product_group_id === -2" class="icon c-pointer" ><i class="fal fa-fw fa-gift fa-2x pt-1 pb-1"  :class="[vueProductGroupList.current_group_id === -2 ? 'text-warning' : 'text-white']"></i></span>
+		</span>
+		<div class="col-3">
+			<form class="input-group border-0 bg-transparent" onsubmit="return false;">
+				<span class="position-absolute" style="line-height: 40px; padding: 0 8px;"><i class="fal fa-search"></i></span>
+				<input class="form-control lang" type="text" placeholder="Search shop" style="padding-left:30px; height: 40px;" id="search-product">
+			</form>
+		</div>
+	</div>
+	<div class="d-flex h-50 flex-grow-1">
+		<div class="align-top h-100 mr-5 col-9 px-0 d-flex flex-column flex-shrink-1 container">
+			<!-- st:shop images -->
+			<div class="d-flex text-left w-100 h-100 flex-wrap p-4 flex-shrink-1 justify-content-start align-content-start" id="product-list">
+
+				<div class="p-4" v-for="item in vueProducts.items" :key="item.product_id">
+					<div class="shop-image ">
+						<img :src="item.image" :alt="item.product_name">
+						<div class="overlay" style="background:rgba(17, 17, 17, 0.75);">
+							<div class="text-white btn-group d-flex w-100 h-100 p-3 text-center flex-column justify-content-around align-content-around">
+								<label class="font-size-4">{{item.product_name}}</label>
+								<label class="font-weight-bold" v-if="vueProductGroupList.current_group_id == -2">{{item.product_coin_price}} {{translate_string('coin')}}</label>
+								<div v-else class="font-weight-bold">
+									<template v-if="theShop.getPriceDisplay(item.product_price).showBothPrices">
+										<!-- <div style="font-size: 0.9em;">Cash/Balance: {{(theSettings.currency ?? '$')}} {{toFixed2(theShop.getPriceDisplay(item.product_price).originalPrice)}}</div>
+										<div style="font-size: 0.9em;">Credit: {{(theSettings.currency ?? '$')}} {{toFixed2(theShop.getPriceDisplay(item.product_price).creditPrice)}}</div> -->
+										<div :title="'Cash/Balance: ' + formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice) + ' | Credit: ' + formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)">
+											{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice)}} / {{formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)}}
+										</div>
+									</template>
+									<template v-else>
+										{{(theSettings.currency ?? '$')}} {{formatNumber(item.product_price)}}
+									</template>
+								</div>
+								<button v-if="vueProductGroupList.current_group_id == -2 && ((item.product_adult_only ?? 0) == 0 || getMemberInfo()?.member?.is_adult == true)" class="btn btn-lg lang" @click="theShop.gift_cart_change_qty(item.product_id, 1)">
+									<i class="fal fa-cart-plus fa-2x"></i>
+								</button>
+								<button v-else-if="(item.product_adult_only ?? 0) == 0 || getMemberInfo()?.member?.is_adult == true" class="btn py-0 mx-2" @click="theShop.cart_change_qty(item.product_id, 1)">
+									<i class="fal fa-cart-plus fa-2x"></i>
+								</button>
+							</div>
+						</div>
+						<i class="adult-only" v-if="(item.product_adult_only ?? 0) == 1"></i>
+					</div>
+					<label v-if="(theSettings.name_show_client ?? 0) == 1" class="text-white text-center mt-2" style="max-width: 138px;">{{item.product_name}}</label>
+				</div>
+			</div>
+			<!-- ed:shop images -->
+		</div>
+
+		<div class="container d-inline-block align-top h-100 col-3 px-0 pt-4">
+			<!-- st:shop cart -->
+			<div class="w-100" id="shop_cart">
+				<div class="bd-highlight w-100 p-3 border-block">
+					<div class="mb-3 w-100 d-flex align-items-end">
+						<label class="text-light lang font-size-5 col-6">New Order</label><label class="col-6 text-right" id="cart_date_gift"></label>
+					</div>
+					<form id="cart_form" onsubmit="return delay_execute(theShop.cart_done);">
+						<table id="cart" class="table cart mb-0 w-100" style="table-layout: fixed;">
+							<tbody>
+								<tr v-for="item in vueOrderItems.items" :key="item.product_id" :data-productid="item.product_id">
+									<td class="feedback-icon col-2">
+										<a @click="theShop.cart_change_qty(item.product_id, -999999)" class="lang c-pointer" data-toggle="tooltip" data-placement="bottom" title="Delete">
+											<i class="fal fa-trash-can fa-2x text-white"></i>
+										</a>
+									</td>
+									<td class="text-left col-4">
+										<label class="text-white">{{item.product_name}}</label>
+										<template v-if="theShop.getPriceDisplay(item.product_price).showBothPrices">
+											<div style="font-size: 0.85em;">
+												<div>Cash/Bal: {{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice)}}</div>
+												<div>Credit: {{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)}}</div>
+											</div>
+										</template>
+										<template v-else>
+											<label>{{(theSettings.currency ?? '$')}} {{formatNumber(item.product_price)}}</label>
+										</template>
+									</td>
+									<td class="col-2">
+										<input type="number" class="px-0 form-control text-center new-order-item-qty bg-transparent" @input="theShop.update_item_qty" :data-productid="item.product_id" min="1" :value="item.order_item_qty">
+									</td>
+									<td class="text-right col-4">
+										<label>{{theSettings.currency ?? '$'}} {{formatNumber(item.order_cost)}}</label>
+									</td>
+								</tr>
+								<tr v-if="vueOrderItems.items.length <= 0">
+									<td colspan="4"></td>
+								</tr>
+								<tr v-if="vueOrderItems.items.length <= 1">
+									<td colspan="4"></td>
+								</tr>
+								<tr v-if="vueOrderItems.items.length <= 2">
+									<td colspan="4"></td>
+								</tr>
+							</tbody>
+							<tfoot class="text-white">
+								<tr>
+									<td class="text-left" colspan="3"><label>{{translate_string("Sub-total:")}}</label></td>
+									<td class="text-right"><label>{{formatNumber(vueOrderItems.total_cost)}}</label></td>
+								</tr>
+								<template v-if="theSettings.bonus_buy_offer === 1 
+									&& vueOrderItems.max_bonuses > 0 
+									&& vueOrderItems.product_count == 0
+									&& vueOrderItems.payment_method === PAY_METHOD_BALANCE 
+									&& theSettings.payment_method_balance == 1 
+									&& theShop.enable_balance">
+									<tr>
+										<td class="text-left" colspan="3"><label>{{translate_string("Maximum bonuses:")}}</label></td>
+										<td class="text-right"><label>{{formatNumber(vueOrderItems.max_bonuses)}}</label></td>
+									</tr>
+									<tr>
+										<td class="text-left" colspan="3"><label>{{translate_string("Your bonuses:")}}</label></td>
+										<td class="text-right"><label>{{formatNumber(memberInfo.member_balance_bonus)}}</label></td>
+									</tr>
+									<tr>
+										<td class="text-left" colspan="3"><label>{{translate_string("Balance to be paid:")}}</label></td>
+										<td class="text-right"><label>{{formatNumber(vueOrderItems.payable_balance)}}</label></td>
+									</tr>
+								</template>
+								<tr v-if="vueOrderItems.total_discount > 0">
+									<td class="text-left" colspan="3"><label>{{translate_string("Discount")}}:</label></td>
+									<td class="text-right"><label>{{formatNumber(vueOrderItems.total_discount)}}</label></td>
+								</tr>
+								<tr v-if="vueOrderItems.total_tax > 0">
+									<td class="text-left" colspan="3"><label>{{translate_string("Tax:")}}</label></td>
+									<td class="text-right"><label>{{formatNumber(vueOrderItems.total_tax)}}</label></td>
+								</tr>
+								<tr>
+									<td class="text-left" colspan="3"><label>{{translate_string("Total amount:")}}</label></td>
+									<td class="text-right"><label>{{formatNumber(vueOrderItems.total_amount)}}</label></td>
+								</tr>
+							</tfoot>
+						</table>
+						<div id="payment-table" class="row cart mb-5">
+							<div class="col-12 d-flex justify-content-around">
+								<div v-if="(typeof(theSettings.payment_method_cash_in_client) == 'undefined' || theSettings.payment_method_cash_in_client == 1) && theShop.enable_cash" class="custom-control custom-radio mr-0">
+									<input type="radio" id="payment_method_cash" name="payment_method" :value="PAY_METHOD_CASH" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" class="custom-control-input">
+									<label class="custom-control-label lang" for="payment_method_cash" data-toggle="tooltip" data-placement="bottom" title="Cash"><i class="fal fa-money-bill-wave fa-3x"></i></label>
+								</div>
+								<div v-if="(typeof(theSettings.payment_method_credit_card) == 'undefined' || theSettings.payment_method_credit_card == 1) && theShop.enable_credit_card" class="custom-control custom-radio ml-5 mr-0">
+									<input type="radio" id="payment_method_card" name="payment_method" :value="PAY_METHOD_CARD" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" class="custom-control-input">
+									<label class="custom-control-label lang" for="payment_method_card" data-toggle="tooltip" data-placement="bottom" title="Credit card"><i class="fa fa-brands fa-cc-visa fa-3x"></i></label>
+								</div>
+								<div v-if="(typeof(theSettings.payment_method_balance) == 'undefined' || theSettings.payment_method_balance == 1) && theShop.enable_balance" class="custom-control custom-radio ml-5 mr-0">
+									<input type="radio" id="payment_method_balance" name="payment_method" :value="PAY_METHOD_BALANCE" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" class="custom-control-input">
+									<label v-if="vueOrderItems.member_group_id == MEMBER_GROUP_POSTPAID" class="custom-control-label lang" for="payment_method_balance" data-toggle="tooltip" data-placement="bottom" title="Pay later"><i class="fal fa-clock fa-3x"></i></label>
+									<label v-else class="custom-control-label lang" for="payment_method_balance" data-toggle="tooltip" data-placement="bottom" title="Balance"><i class="fal fa-wallet fa-3x"></i></label>
+								</div>
+							</div>
+						</div>
+						
+
+						<div class="btn-group mb-5 w-100">
+							<button type="button" class="btn btn-lg f-left lang w-25 px-0 text-center py-0 client-btn-close" data-placement="bottom" data-toggle="tooltip" title="Clear" id="new-order-clear" :disabled="vueOrderItems.items.length == 0" onclick="javascript:theShop.cart_clear()"><i class="fal fa-trash fa-2x text-white"></i></button>
+							<button type="submit" class="btn btn-lg f-right lang w-75 px-9 text-center ml-1 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Done" id="new-order-done" :disabled="vueOrderItems.items.length == 0"><i class="fal fa-check fa-2x text-white"></i></button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- ed:shop cart -->
+
+			<!-- st:shop cart gifts -->
+			<div class="w-100" style="display:none;" id="shop_cart_gift">
+				<div class="bd-highlight mb-5 w-100 p-3 mt-8 border-block">
+					<div class="mb-3 w-100 d-flex align-items-end">
+						<label class="text-light lang font-size-5 col-6">New Order</label><label class="col-6 text-right" id="cart_date_gift"></label>
+					</div>
+					<form class="input-group border-0 bg-transparent text-right" onsubmit="return delay_execute(theShop.gift_cart_done);">
+						<table id="gift_cart" class="table cart" style="table-layout: fixed;">
+							<tbody>
+								<tr v-for="item in vueGiftOrders.items" :key="item.product_id" :data-productid="item.product_id" style="min-height:75px; height:75px;">
+									<td class="col-2">
+										<a @click="theShop.gift_cart_change_qty(item.product_id, -999999)" class="lang c-pointer" data-toggle="tooltip" data-placement="bottom" title="Delete">
+											<i class="fal fa-trash-can fa-2x text-white"></i>
+										</a>
+									</td>
+									<td class="text-left col-4">
+										<label class="text-white">{{item.product_name}}</label>
+										<label>{{item.product_coin_price}} {{translate_string("coin")}}</label>
+									</td>
+									<td class="col-2">
+										<input type="number" class="px-0 form-control text-center new-order-item-gift-qty bg-transparent" @input="theShop.update_gift_item_qty" :data-productid="item.product_id" min="1" :value="item.order_item_qty">
+									</td>
+									<td class="text-right col-4">
+										<label>{{formatNumber(item.order_cost)}} {{translate_string("coin")}}</label>
+									</td>
+								</tr>
+								<tr v-if="vueGiftOrders.items.length <= 0">
+									<td colspan="4"></td>
+								</tr>
+								<tr v-if="vueGiftOrders.items.length <= 1">
+									<td colspan="4"></td>
+								</tr>
+								<tr v-if="vueGiftOrders.items.length <= 2">
+									<td colspan="4"></td>
+								</tr>
+							</tbody>
+							<tfoot class="text-white">
+								<tr>
+									<td class="text-left" colspan="3"><label>{{translate_string("Total coins:")}}</label></td>
+									<td class="text-right"><label>{{formatNumber(vueGiftOrders.total_amount)}}</label></td>
+								</tr>
+							</tfoot>
+						</table>
+						<div class="btn-group mb-5 w-100">
+							<button type="button" class="btn btn-lg f-left lang client-btn-close" id="new-order-clear-gift" style="width:25%; padding-left:0px; padding-right:0px; text-align:center;" :disabled="vueGiftOrders.items.length == 0" onclick="javascript:theShop.gift_cart_clear()" data-placement="bottom" data-toggle="tooltip" title="Clear"><i class="fal fa-trash fa-2x text-white"></i></button>
+							<button type="submit" class="btn btn-lg f-right lang client-btn-success" id="new-order-pay-coin" style="width:72%; padding-left:0px; padding-right:0px; text-align:center; margin-left:5px;" :disabled="vueGiftOrders.items.length == 0" data-placement="bottom" data-toggle="tooltip" title="Pay by coins"><i class="fal fa-check fa-2x text-white"></i></button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- ed:shop cart gifts -->
+		</div>
+
+	</div>
+	<!-- ed:shop area -->
+</div>
