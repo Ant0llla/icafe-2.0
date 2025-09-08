@@ -44,7 +44,7 @@
 	<!-- dd:login div -->
 
 	<!-- st:admin exit div -->
-	<div class="adminexitDiv h-100 formDiv" style="display: none;">
+        <div class="adminexitDiv h-100 formDiv is-hidden">
 		<section class="h-100 d-flex align-items-center justify-content-center">
 			<div class="admin-exit-form-div" >
 				<form method="post" id="adminexitForm" role="form" class="form-horizontal text-center" onsubmit="return delay_execute(admin_exit_form_submit);">
@@ -63,7 +63,7 @@
 	<!-- ed:admin exit div -->
 
 	<!-- st:home-version-enter-cafe-id div -->
-	<div class="homecafeidDiv h-100" style="display: none;">
+        <div class="homecafeidDiv h-100 is-hidden">
 		<section class="h-100 d-flex align-items-center justify-content-center">
 			<div class="text-center col-3 home-cafeid-form-div" >
 				<form method="post" id="homecafeidForm" role="form" class="form-horizontal text-center" onsubmit="return delay_execute(homecafeid_form_submit);">
@@ -84,7 +84,7 @@
 
 <!-- st:modal:register-member -->
 <div class="modal myModalRegisterMember" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered" role="document" style="width:700px; max-width:700px;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title lang">Member</h5>
@@ -93,7 +93,7 @@
 				</button>
 			</div>
 			<form id="form-register-member" class="form-horizontal" onsubmit="return delay_execute(member_register);">
-				<div class="modal-body" style="padding: 20px 70px;">
+                            <div class="modal-body modal-body-pad">
 
 					<div class="row">
 						<div class="col-6">
@@ -169,7 +169,7 @@
 										<input type="text" class="form-control modal-input bg-transparent" name="member_sms_code" >
 									</div>
 									<div class="col-5">
-										<button type="button" style="width:90px; padding-left: 0px; padding-right: 0;text-align:center;" class="btn btn-primary" onclick="javascript:SmsClassFun.sendCode()" id="sms_timer_code" title="Get verification code">GetCode</button>
+                                                                                <button type="button" class="btn btn-primary btn-code" onclick="javascript:SmsClassFun.sendCode()" id="sms_timer_code" title="Get verification code">GetCode</button>
 									</div>
 								</div>
 							</div>
@@ -243,7 +243,7 @@
 
 <!-- modal:topup-login -->
 <div class="modal myModalTopupLogin" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title lang">Guest topup login</h5>
@@ -252,7 +252,7 @@
 				</button>
 			</div>
 			<form class="form-horizontal" onsubmit="return delay_execute(theTopupLogin.create_topup_qrcode);">
-				<div class="modal-body" style="padding: 20px 70px;">
+                            <div class="modal-body modal-body-pad">
 					<div class="row">
 						<div class="col-12">
 							<div class="form-group">
@@ -298,7 +298,7 @@
 
 <!-- modal:member-login  -->
 <div class="modal myModalMemberLogin" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title lang">Social login</h5>
@@ -316,7 +316,7 @@
 
 <!-- modal:member-register  -->
 <div class="modal myModalQRMemberRegister" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title lang">Register</h5>
@@ -333,7 +333,7 @@
 
 <!-- st:modal:club rules agreement- -->
 <div class="modal clubRulesModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title lang">Club Rules</h5>
@@ -350,7 +350,7 @@
 <!-- ed:modal:club rules agreement- -->
 <!-- st:modal:personal data agreement- -->
 <div class="modal personalDataModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title lang">Privacy Policy</h5>
@@ -368,7 +368,7 @@
 
 <!-- st:modal:forgot-password -->
 <div class="modal myModalForgotPassword" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title lang">Forgot password</h5>
@@ -377,7 +377,7 @@
 				</button>
 			</div>
 			<form id="form-forgot-password" class="form-horizontal" onsubmit="return delay_execute(theForgotPassword.submit_form);">
-				<div class="modal-body" style="padding: 20px 70px;">
+                            <div class="modal-body modal-body-pad">
 					<div class="row">
 						<div class="col-12">
 							<div class="form-group">
