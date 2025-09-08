@@ -13,6 +13,7 @@
         </script>
         <link rel="stylesheet" href="../../css/cyberpunk.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script src="../../js/theme-toggle.js" defer></script>
 	
 </head>
 <body ondragstart="return false" onselectstart = "return false" class="bs-c br-n ba-f text-gray" :style="vueGlobal.bodyStyle" @vue:mounted="mounted()" v-cloak>
@@ -26,6 +27,8 @@
 <div id="page-event-modal"></div>
 <div id="page-system-settings-modal"></div>
 <div id="page-copy-game-license-modal"></div>
+
+<button id="theme-toggle" class="btn btn-ghost theme-toggle" aria-label="Toggle theme">🌓</button>
 
 <script>
 	function loadHtml(url, id)

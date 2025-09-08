@@ -177,11 +177,11 @@
 					</div>
 					<div class="row" id="club-rule-agreement-row">
 						<div class="col-12">
-							<div class="form-check form-check-inline" style="display: inline-block !important;">
+                                                    <div class="form-check form-check-inline inline-block">
 								<label for="club-rule-agreement" class="form-check-label">
 									<input type="checkbox" class="form-check-input lang" id="club-rule-agreement" onclick="theMemberRegister.agreement_check()"/>
 									<label class="input-helper" for="club-rule-agreement"><span class="lang">
-										I have read and agree to the <a href="#" onclick="theMemberRegister.show_club_rules()" style="text-decoration: none;">club rules</a>
+                                                                            I have read and agree to the <a href="#" onclick="theMemberRegister.show_club_rules()" class="no-decoration">club rules</a>
 									</span></label>
 								</label>
 							</div>
@@ -189,11 +189,11 @@
 					</div>
 					<div class="row" id="personal-data-agreement-row">
 						<div class="col-12">
-							<div class="form-check form-check-inline" style="display: inline-block !important;">
+                                                    <div class="form-check form-check-inline inline-block">
 								<label for="personal-data-agreement" class="form-check-label">
 									<input type="checkbox" class="form-check-input lang" id="personal-data-agreement" onclick="theMemberRegister.agreement_check()"/>
 									<label class="input-helper" for="personal-data-agreement"><span class="lang">
-										I agree to the <a href="#" onclick="theMemberRegister.show_personal_data()" style="text-decoration: none;">privacy policy</a>
+                                                                            I agree to the <a href="#" onclick="theMemberRegister.show_personal_data()" class="no-decoration">privacy policy</a>
 									</span></label>
 								</label>
 							</div>
@@ -275,7 +275,7 @@
 						<div id="login_payment_qr" class="col-12 d-flex justify-content-center" data-clipboard-target="#login_payment_qr" @click="copyToClipboard('#login_payment_qr');">
 						</div>
 						<div id="login_payment_type" class="col-12 d-flex justify-content-center"  >
-							<img src="images/kaspi_qr.jpg" style="width: 266px;" class="d-none">
+                                                    <img src="images/kaspi_qr.jpg" class="d-none w-266">
 						</div>
 						<div id="login_payment_url" class="col-12 d-flex justify-content-center">
 							<div class="razorpay-qr-img">
@@ -342,7 +342,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div id="club_rules_content" style="white-space: pre-wrap;"></div>
+                            <div id="club_rules_content" class="pre-wrap"></div>
 			</div>
 		</div>
 	</div>
@@ -359,7 +359,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div id="personal_data_content" style="white-space: pre-wrap;"></div>
+                            <div id="personal_data_content" class="pre-wrap"></div>
 			</div>
 		</div>
 	</div>

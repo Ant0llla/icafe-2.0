@@ -21,5 +21,18 @@
 			- manifest.json		// 主题信息
 		- reborn
   		- ...
-		- icafemenu_theme_v2
-			- **main.htm**
+                - icafemenu_theme_v2
+                        - **main.htm**
+
+## Cyberpunk Theme
+
+The UI uses `css/cyberpunk.css` to provide a Cyberpunk Dojo look. Colors and fonts are configured via CSS variables:
+
+```
+--bg, --primary, --accent, --accent-2, --info, --blue, --neon-pink
+```
+
+### Theme toggle
+
+A button with id `theme-toggle` switches between dark and light modes. The choice is saved in `localStorage` and applied on load.
+
